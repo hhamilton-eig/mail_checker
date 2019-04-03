@@ -6,7 +6,7 @@
 # cd $HOME/etc && find -regextype posix-egrep -regex '\.\/\w+\.(((?!rc)\w+\.\w+)|\w+$)' | cut -d'/' -f2
 
 # Run find from $HOME so output looks like $HOME/etc/<stuff>
-# find ~/etc/ -regextype posix-egrep -regex '\/\w+\/\w+\/\w+\/\w+\.(((?!rc)\w+\.\w+)|\w+$)' | cut -d'/' -f5
+# hhamilt1@findmypolitician.org [~]# find $HOME/etc/ -regextype posix-egrep -regex '(\/\w+){4}\.(((?!rc)\w+\.\w+)|\w+$)' | cut -d'/' -f5
 
 #Actually try /var/cpanel/users/$user and /var/cpanel/userdata/$user
 
