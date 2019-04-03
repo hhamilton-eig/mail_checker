@@ -11,8 +11,11 @@
 # TODO Display all addresses for each domain found in $HOME/mail by checking shadow + passwd
 
 for DOMAIN in $(find $HOME/etc/ -regextype posix-egrep -regex '(\/\w+){4}\.(((?!rc)\w+\.\w+)|\w+$)' | cut -d'/' -f5); do 
-  for ADDRESS in $(awk -F':' '{print $1}' $HOME/etc/$DOMAIN/passwd); do
-    echo $DOMAIN - $ADDRESS
+  for PASSWD_ADDRESS in $(awk -F':' '{print $1}' $HOME/etc/$DOMAIN/passwd); do
+      for SHADOW_ADDRESS in $(awk -F':' '{print $1}' $HOME/etc/$DOMAIN/shadow); do
+        [[ $PASSWD_ADDRESS == $SHADOW_ADDRESS ]] && \
+        echo $DOMAIN - $PASSWD_ADDRESS
+      done  
   done
 done
 
