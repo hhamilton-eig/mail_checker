@@ -10,6 +10,12 @@
 
 # TODO Display all addresses for each domain found in $HOME/mail by checking shadow + passwd
 
+for DOMAIN in $(find $HOME/etc/ -regextype posix-egrep -regex '(\/\w+){4}\.(((?!rc)\w+\.\w+)|\w+$)' | cut -d'/' -f5); do 
+  for ADDRESS in $(awk -F':' '{print $1}' $HOME/etc/$DOMAIN/passwd); do
+    echo $DOMAIN - $ADDRESS
+  done
+done
+
 # TODO Check for orphaned entries in shadow/passwd/mail
 
 # TODO Display size (breakdown and total), quotas, mail count (per box and total)
