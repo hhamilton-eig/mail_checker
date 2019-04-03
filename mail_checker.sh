@@ -6,9 +6,10 @@
 # cd $HOME/etc && find -regextype posix-egrep -regex '\.\/\w+\.(((?!rc)\w+\.\w+)|\w+$)' | cut -d'/' -f2
 
 # Run find from $HOME so output looks like $HOME/etc/<stuff>
-# hhamilt1@findmypolitician.org [~]# find $HOME/etc/ -regextype posix-egrep -regex '(\/\w+){4}\.(((?!rc)\w+\.\w+)|\w+$)' | cut -d'/' -f5
+# find $HOME/etc/ -regextype posix-egrep -regex '(\/\w+){4}\.(((?!rc)\w+\.\w+)|\w+$)' | cut -d'/' -f5
 
-#Actually try /var/cpanel/users/$user and /var/cpanel/userdata/$user
+# Actually try /var/cpanel/users/$user and /var/cpanel/userdata/$user
+# awk -F'DNS[0-9]?=' ' NF > 1 {print $2}' /var/cpanel/users/$(whoam i)
 
 # TODO Display all addresses for each domain found in $HOME/mail by checking shadow + passwd
 
