@@ -3,9 +3,12 @@
 # TODO Write some regex that captures domain names in $HOME/mail
 
 # Run find from etc so output looks like ./<stuff>
-#cd $HOME/etc && find -regextype posix-egrep -regex '\.\/\w+\.(((?!rc)\w+\.\w+)|\w+$)' | cut -d'/' -f2
+# cd $HOME/etc && find -regextype posix-egrep -regex '\.\/\w+\.(((?!rc)\w+\.\w+)|\w+$)' | cut -d'/' -f2
+
 # Run find from $HOME so output looks like $HOME/etc/<stuff>
-find ~/etc/ -regextype posix-egrep -regex '\/\w+\/\w+\/\w+\/\w+\.(((?!rc)\w+\.\w+)|\w+$)' | cut -d'/' -f5
+# find ~/etc/ -regextype posix-egrep -regex '\/\w+\/\w+\/\w+\/\w+\.(((?!rc)\w+\.\w+)|\w+$)' | cut -d'/' -f5
+
+#Actually try /var/cpanel/users/$user and /var/cpanel/userdata/$user
 
 # TODO Display all addresses for each domain found in $HOME/mail by checking shadow + passwd
 
