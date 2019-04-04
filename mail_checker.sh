@@ -29,7 +29,7 @@ for DOMAIN in "${domains[@]}"; do
   done
 done
 
-printf "%s\t%s\n" "If an address does not appear in this list check $HOME/etc/{shadow,passwd}, $HOME/mail , and mailperms."
+printf "%s\t%s\n" "If an address does not appear in this list check $HOME/etc/<domain>/{shadow,passwd} for the missing entries, $HOME/mail/<domain> for content, and mailperm."
 for i in "${!addresses[@]}"; do
   printf "%s\t%s\n" "${addresses[$i]}""@""$i"
 done
