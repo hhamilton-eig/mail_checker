@@ -29,14 +29,38 @@ for DOMAIN in "${domains[@]}"; do
   done
 done
 
-printf "%s\t%s\n" "If an address does not appear in this list check $HOME/etc/<domain>/{shadow,passwd} for the missing entries, $HOME/mail/<domain> for content, and mailperm."
+printf "\n%b\n" "If an address does not appear in this list check $HOME/etc/<domain>/{shadow,passwd} for the missing entries, $HOME/mail/<domain> for content, and mailperm.\n"
 for i in "${!addresses[@]}"; do
-  printf "%s\t%s\n" "${addresses[$i]}""@""$i"
+  printf "%b" "${addresses[$i]}""@""$i\n"
 done
+printf "%b" "\nDomain mail size breakdown:\n"
 
 # TODO Check for orphaned entries in shadow/passwd/mail
 
 # TODO Display size (breakdown and total), quotas, mail count (per box and total)
+
+domain_size(){
+	du -sh $HOME/mail/$DOMAIN;
+}
+
+address_size(){
+	du -sh $HOME/mail/$DOMAIN/$ADDRESS;
+}
+
+for DOMAIN in "${domains[@]}"; do
+  printf "\n%s" "$(domain_size)"
+done
+
+printf "%b" "\n"
+
+for ADDRESS in "${addresses[@]}"; do
+  printf "\n%s" "$(address_size)"
+done
+
+printf "\n%b" "\n"
+# Total size of each domain
+# Per box breakdown
+
 
 # TODO Do MX check (IP , remote/local)
 
