@@ -1,20 +1,14 @@
 #!/bin/bash
 
-# TODO Arrange (several?) array(s) to store all the domain names and info about them
+# Arrays for holding all the repetitive data
 
 declare -a domains
 declare -A addresses
 
-# TODO Write some regex that captures domain names in $HOME/mail
-
-# Run find from $HOME so output looks like $HOME/etc/<stuff>
-# find $HOME/etc/ -regextype posix-egrep -regex '(\/\w+){4}\.(((?!rc)\w+\.\w+)|\w+$)' | cut -d'/' -f5
-
-# Actually try /var/cpanel/users/$user and /var/cpanel/userdata/$user
-# awk -F'DNS[0-9]?=' ' NF > 1 {print $2}' /var/cpanel/users/$(whoam i)
-
-# TODO Display all addresses for each domain found in $HOME/mail by checking shadow + passwd
-
+# Could make an associative array on a per-domain basis that holds a bunch of strings 
+# each representing some feature of the domain
+# e.g. - domain_info[$DOMAIN]="admin|info|contact, total storage , perms check , DNS info/checks"
+# Can store addresses in there too!
 
 # Checks $HOME/mail for domains and adds them to the domains array
 
