@@ -8,7 +8,7 @@ declare -A addresses
 # Could make an associative array on a per-domain basis that holds a bunch of strings 
 # each representing some feature of the domain
 # e.g. - domain_info[$DOMAIN]="admin|info|contact, total storage , perms check , DNS info/checks"
-# Can store addresses in there too!
+# Can store addresses in there too! This way the value can be pulled from the array to do operations
 
 # Checks $HOME/mail for domains and adds them to the domains array
 
