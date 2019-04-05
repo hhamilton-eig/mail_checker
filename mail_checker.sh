@@ -12,9 +12,12 @@ declare -A addresses
 
 # Checks $HOME/mail for domains and adds them to the domains array
 
-for DOMAIN in $(find $HOME/etc/ -regextype posix-egrep -regex '(\/\w+){4}\.(((?!rc)\w+\.\w+)|\w+$)' | cut -d'/' -f5); do
-  domains+=($DOMAIN)
+for DOMAIN in $(find $HOME/etc/ -regextype posix-egrep -regex '(\/\w+){4}\.(((?!rc)\w+\.\w+)|\w+$)' \
+| cut -d'/' -f5); do
+  domains+=("$DOMAIN")
 done
+
+# printf '%s\n' "These are the contents:" "${domains[@]}"
 
 # Iterates through domains array and assigns a list of addresses
 # that pass certain checks to their domain in the addresses array
@@ -23,19 +26,32 @@ for DOMAIN in "${domains[@]}"; do
   for ADDRESS_SHADOW in $(awk -F':' '{print $1}' $HOME/etc/$DOMAIN/shadow); do
     for ADDRESS_PASSWD in $(awk -F':' '{print $1}' $HOME/etc/$DOMAIN/shadow); do
       [[ $ADDRESS_SHADOW == $ADDRESS_PASSWD ]] && \
-      [[ -e $HOME/mail/$ADDRESS_SHADOW ]] && \ 
+      [[ -e $HOME/mail/$DOMAIN/$ADDRESS_SHADOW ]] && \
       addresses[$DOMAIN]="$ADDRESS_PASSWD"
     done
   done
 done
 
-printf "\n%b\n" "If an address does not appear in this list check $HOME/etc/<domain>/{shadow,passwd} for the missing entries, $HOME/mail/<domain> for content, and mailperm.\n"
+echo -e "\nIf an address does not appear in this list, check" \
+" $HOME/etc/<domain>/{shadow,passwd} for the missing entries, $HOME/mail/<domain> for content," \
+" and potentially run mailperm.\n"
 for i in "${!addresses[@]}"; do
-  printf "%b" "${addresses[$i]}""@""$i\n"
+  echo -e "${addresses[$i]}""@""$i"
 done
-printf "%b" "\nDomain mail size breakdown:\n"
 
 # TODO Check for orphaned entries in shadow/passwd/mail
+
+for DOMAIN in "${domains[@]}"; do
+  if [[ $(wc -l $HOME/etc/$DOMAIN/shadow) == $(wc -l $HOME/etc/$DOMAIN/passwd) ]]; then
+    echo -e "\nLength of shadow and passwd files match."
+  else
+    echo -e "\nThe length of the shadow and passwd files for $DOMAIN do not match." \
+" Would you like to recreate the addresses in the longer of the two files?" \
+" Warning! This will reset passwords for all email addresses under this domain," \
+" so only do it if you are sure."
+  fi
+done
+
 
 # TODO Display size (breakdown and total), quotas, mail count (per box and total)
 
@@ -47,17 +63,21 @@ address_size(){
 	du -sh $HOME/mail/$DOMAIN/$ADDRESS;
 }
 
+echo -e "\nTotal mail size by domain:\n"
+
 for DOMAIN in "${domains[@]}"; do
-  printf "\n%s" "$(domain_size)"
+  echo "$(domain_size)"
 done
 
-printf "%b" "\n"
+
+echo -e "\nTotal mail size by address:\n"
 
 for ADDRESS in "${addresses[@]}"; do
-  printf "\n%s" "$(address_size)"
+  echo "$(address_size)"
 done
+echo
 
-printf "\n%b" "\n"
+
 # Total size of each domain
 # Per box breakdown
 
