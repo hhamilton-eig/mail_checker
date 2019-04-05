@@ -17,6 +17,8 @@ for DOMAIN in $(find $HOME/etc/ -regextype posix-egrep -regex '(\/\w+){4}\.(((?!
   domains+=("$DOMAIN")
 done
 
+# TODO Do MX check (IP , remote/local, SPF/DKIM)
+
 # Iterates through domains array and assigns a list of addresses
 # that pass certain checks to their domain in the addresses array
 
@@ -37,7 +39,8 @@ for i in "${!addresses[@]}"; do
   echo -e "${addresses[$i]}""@""$i"
 done
 
-# TODO Check for orphaned entries in shadow/passwd/mail
+# Checks for orphaned entries in $HOME/etc/$DOMAIN/{shadow,passwd}
+# TODO add uapi loop that recreates addresses if user says "yes" for each domain
 
 for DOMAIN in "${domains[@]}"; do
   if [[ $(wc -l $HOME/etc/$DOMAIN/shadow) == $(wc -l $HOME/etc/$DOMAIN/passwd) ]]; then
@@ -49,9 +52,6 @@ for DOMAIN in "${domains[@]}"; do
 " so only do it if you are sure."
   fi
 done
-
-
-# TODO quotas, mail count (per box and total)
 
 # Functions for grabbing sizes
 
@@ -71,7 +71,8 @@ for DOMAIN in "${domains[@]}"; do
   echo "$(domain_size)"
 done
 
-# Per box breakdown - add inbox/sent/trash breakdown here when done
+# TODO quotas, mail count for each box, inbox/sent/trash DU breakdown
+# TODO Check for forwarders, autoresponders, filters
 
 echo -e "\nTotal mail size by address:\n"
 
@@ -89,10 +90,6 @@ done
 #done
 
 echo
-
-# TODO Do MX check (IP , remote/local)
-
-# TODO Check for forwarders, autoresponders, filters
 
 # TODO Check for exim/dovecot logs if possible
 
