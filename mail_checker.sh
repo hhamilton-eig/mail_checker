@@ -17,8 +17,6 @@ for DOMAIN in $(find $HOME/etc/ -regextype posix-egrep -regex '(\/\w+){4}\.(((?!
   domains+=("$DOMAIN")
 done
 
-# printf '%s\n' "These are the contents:" "${domains[@]}"
-
 # Iterates through domains array and assigns a list of addresses
 # that pass certain checks to their domain in the addresses array
 
@@ -53,7 +51,9 @@ for DOMAIN in "${domains[@]}"; do
 done
 
 
-# TODO Display size (breakdown and total), quotas, mail count (per box and total)
+# TODO quotas, mail count (per box and total)
+
+# Functions for grabbing sizes
 
 domain_size(){
 	du -sh $HOME/mail/$DOMAIN;
@@ -63,19 +63,17 @@ address_size(){
 	du -sh $HOME/mail/$DOMAIN/$ADDRESS;
 }
 
+# Total size of each domain
+
 echo -e "\nTotal mail size by domain:\n"
 
 for DOMAIN in "${domains[@]}"; do
   echo "$(domain_size)"
 done
 
+# Per box breakdown - add inbox/sent/trash breakdown here when done
 
 echo -e "\nTotal mail size by address:\n"
-
-#for ADDRESS in "${addresses[@]}"; do
-#  echo "$(address_size)"
-#done
-
 
 for DOMAIN in "${domains[@]}"; do
   for ADDRESS in \
@@ -85,12 +83,12 @@ for DOMAIN in "${domains[@]}"; do
   echo
 done
 
+# Can't do before addresses array gets refactored to include all addresses
+#for ADDRESS in "${addresses[@]}"; do
+#  echo "$(address_size)"
+#done
+
 echo
-
-
-# Total size of each domain
-# Per box breakdown
-
 
 # TODO Do MX check (IP , remote/local)
 
