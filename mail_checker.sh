@@ -72,9 +72,19 @@ done
 
 echo -e "\nTotal mail size by address:\n"
 
-for ADDRESS in "${addresses[@]}"; do
-  echo "$(address_size)"
+#for ADDRESS in "${addresses[@]}"; do
+#  echo "$(address_size)"
+#done
+
+
+for DOMAIN in "${domains[@]}"; do
+  for ADDRESS in \
+  $(find $HOME/mail/$DOMAIN -maxdepth 1 -regextype posix-egrep  -regex '(\/\w+){4}\.\w+\/.*' | cut -d'/' -f6); do
+  address_size
+  done
+  echo
 done
+
 echo
 
 
