@@ -34,7 +34,7 @@ done
 
 echo -e "\nIf an address does not appear in this list, check" \
 " $HOME/etc/<domain>/{shadow,passwd} for the missing entries, $HOME/mail/<domain> for content," \
-" and potentially run mailperm.\n"
+"and potentially run mailperm.\n"
 for i in "${!addresses[@]}"; do
   echo -e "${addresses[$i]}""@""$i"
 done
