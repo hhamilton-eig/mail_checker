@@ -1,23 +1,38 @@
 #!/bin/bash
 
-# Arrays for holding all the repetitive data
+# Array for holding info about domains ##
 
-declare -a domains
-declare -A addresses
+declare -A domain_info
 
-# Could make an associative array on a per-domain basis that holds a bunch of strings 
-# each representing some feature of the domain
 # e.g. - domain_info[$DOMAIN]="admin|info|contact, total storage , perms check , DNS info/checks"
-# Can store addresses in there too! This way the value can be pulled from the array to do operations
 
-# Checks $HOME/mail for domains and adds them to the domains array
+## Functions go here ##
 
-for DOMAIN in $(find $HOME/etc/ -regextype posix-egrep -regex '(\/\w+){4}\.(((?!rc)\w+\.\w+)|\w+$)' \
-| cut -d'/' -f5); do
-  domains+=("$DOMAIN")
-done
+# Prints a list of domains present in $HOME/mail
 
-# TODO Do MX check (IP , remote/local, SPF/DKIM)
+get_domains(){
+  find $HOME/etc/ -regextype posix-egrep -regex '(\/\w+){4}\.(((?!rc )\w+\.\w+)|\w+$)' \
+  | cut -d'/' -f5
+}
+
+# Prints a list of addresses present in $HOME/mail
+
+get_addresses(){
+  find $HOME/mail/*/ -maxdepth 1 -regextype posix-egrep  - regex '(\/\w+){4}\.\w+\/\S+' \
+  | awk 'BEGIN {FS="/"; OFS="@"} {print $6, $5}'
+}
+
+# TODO make this output nicer ?
+# Grabs and prints sizes
+
+get_size(){
+	du -sh $HOME/mail/$1/$2;
+}
+
+# Iterates through output of get_addresses and pairs address names with their domain in the info array
+
+for address in get_addresses; do
+  domain_info[$domain]+="$address"
 
 # Iterates through domains array and assigns a list of addresses
 # that pass certain checks to their domain in the addresses array
@@ -53,16 +68,6 @@ for DOMAIN in "${domains[@]}"; do
   fi
 done
 
-# Functions for grabbing sizes
-
-domain_size(){
-	du -sh $HOME/mail/$DOMAIN;
-}
-
-address_size(){
-	du -sh $HOME/mail/$DOMAIN/$ADDRESS;
-}
-
 # Total size of each domain
 
 echo -e "\nTotal mail size by domain:\n"
@@ -90,6 +95,8 @@ done
 #done
 
 echo
+
+# TODO Do MX check (IP , remote/local, SPF/DKIM)
 
 # TODO Check for exim/dovecot logs if possible
 
