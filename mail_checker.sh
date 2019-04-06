@@ -18,7 +18,7 @@ get_domains(){
 # Prints a list of addresses present in $HOME/mail
 
 get_addresses(){
-  find $HOME/mail/*/ -maxdepth 1 -regextype posix-egrep  - regex '(\/\w+){4}\.\w+\/\S+' \
+  find $HOME/mail/*/ -maxdepth 1 -regextype posix-egrep  -regex '(\/\w+){4}\.\w+\/\S+' \
   | awk 'BEGIN {FS="/"; OFS="@"} {print $6, $5}'
 }
 
@@ -31,8 +31,16 @@ get_size(){
 
 # Iterates through output of get_addresses and pairs address names with their domain in the info array
 
-for address in get_addresses; do
-  domain_info[$domain]+="$address"
+for address in $(get_addresses); do
+  $address | cut -d'@' -f2 
+  domain_info["$domain"]+="$address"
+done
+
+
+for i in "${!domain_info[@]}"; do
+echo -e "${domain_info[$i]}" "$i"
+echo
+done
 
 # Iterates through domains array and assigns a list of addresses
 # that pass certain checks to their domain in the addresses array
