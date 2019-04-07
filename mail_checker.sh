@@ -4,11 +4,7 @@
 
 declare -A domain_info
 
-<<<<<<< HEAD
 ## Functions ##
-=======
-## Functions go here ##
->>>>>>> array_refactor
 
 # Prints a list of domains present in $HOME/mail
 
@@ -32,7 +28,6 @@ get_dns(){
 }
 
 # TODO make this output nicer
->>>>>>> array_refactor
 # Grabs and prints sizes
 
 get_size(){
