@@ -23,11 +23,11 @@ get_addresses(){
 # Prints DNS info with trailing "." trimmed
 # get_mx $domain $record
 
-get_mx(){
+get_dns(){
   dig +nocmd $1 $2 +multiline +noall +answer | sed -r 's/\.(\s|$)/ /g'
 }
 
-# TODO make this output nicer ?
+# TODO make this output nicer
 # Grabs and prints sizes
 
 get_size(){
@@ -36,6 +36,7 @@ get_size(){
 
 # Runs some checks on addresses in shadow and passwd for a given domain
 # hash_checker domain (passwd|shadow) (passwd|shadow)
+# TODO add perm checking to these 2 files
 
 hash_checker(){
   for address in $(awk -F':' '{print $1}' $HOME/etc/$1/$2); do
@@ -53,14 +54,23 @@ hash_checker(){
 # Iterates through output of get_addresses and pairs address names with 
 # their domain in the domain_info array
 
+# TODO find a way to look in passwd, shadow, and maildir for addresses in this list
+# TODO find a way to capture domain list from /var/cpanel/userdata/$(whoami)/main
+
 for i in $(get_addresses); do
   address="$(echo $i | cut -d'@' -f1)"
   domain="$( echo $i | cut -d'@' -f2)"
   domain_info["$domain"]+="$address "
 done
 
-for i in "${!domain_info[@]}"; do
-  echo -e "\n${i}" "contains the following addresses:\n\n${domain_info[$i]}"
+# Prints addresses in $HOME/mail under each domain
+
+for domain in "${!domain_info[@]}"; do
+  echo -e "\nThese addresses are present in ${HOME}/mail/${domain}:"
+  echo
+  for address in $(echo "${domain_info[$domain]}"); do
+    echo "${address}@${domain}"
+  done
 done
 
 # Iterates through domains and performs shadow/passwd file checks
@@ -86,28 +96,35 @@ for domain in "${!domain_info[@]}"; do
   echo "$(get_size $domain)"
 done
 
-# TODO quotas, mail count for each box, inbox/sent/trash DU breakdown
-# TODO Check for forwarders, autoresponders, filters
+# Total size of each address in $HOME/mail
 
 echo -e "\nTotal mail size by address:\n"
 
-for domains in "${!domain_info[@]}"; do
-  for domain in $domains; do
-    for addresses in "${domain_info[$domain]}"; do
-      for address in $addresses; do
-        echo "${address}@${domain} - $(get_size $domain $address)"
-      done
-    done
+for domain in "${!domain_info[@]}"; do
+  for address in $(echo "${domain_info[$domain]}"); do
+    echo "${address}@${domain} - $(get_size $domain $address)"
   done
+  echo
 done
 
+# TODO quotas, mail count for each box, inbox/sent/trash DU breakdown
 
-# TODO Do MX check (IP , remote/local, SPF/DKIM)
+# TODO Check for forwarders, autoresponders, filters
+
+# Checks and prints NS + MX info for domains in array
+
+for domain in "${!domain_info[@]}"; do
+  echo -e "DNS checks for ${domain}:\n"
+  get_dns $domain ns
+  echo
+  get_dns $domain mx
+  echo
+done
+
+# TODO Check remote/local, SPF/DKIM
 
 # TODO Check for exim/dovecot logs if possible
 
 # TODO Check for top recipients/senders
 
 # TODO Check and warn for incorrect perms
-
-echo
