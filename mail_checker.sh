@@ -53,7 +53,8 @@ for domain in "${!domain_info[@]}"; do
     for address in $(awk -F':' '{print $1}' $HOME/etc/$domain/shadow); do
       if grep -q $address $HOME/etc/$domain/passwd; then
         continue
-      else echo "$address""@""$domain"" may have issues!"
+      else 
+        echo "$address""@""$domain"" may have issues!"
       fi
     done
   fi
