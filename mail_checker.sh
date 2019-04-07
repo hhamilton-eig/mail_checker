@@ -88,7 +88,6 @@ done
 
 # TODO add uapi loop that recreates addresses if user says "yes" for each domain
 
-# TODO make output prettier
 # Total size of each domain
 
 echo -e "\nTotal mail size by domain:\n"
