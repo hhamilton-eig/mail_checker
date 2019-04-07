@@ -26,10 +26,11 @@ get_addresses(){
 # Grabs and prints sizes
 
 get_size(){
-	du -sh $HOME/mail/$1/$2;
+        du -sh $HOME/mail/$1/$2;
 }
 
 # Iterates through output of get_addresses and pairs address names with their domain in the info array
+
 
 for i in $(get_addresses); do
   address=$( echo $i | cut -d'@' -f1)
@@ -38,29 +39,32 @@ for i in $(get_addresses); do
 done
 
 for i in "${!domain_info[@]}"; do
-  echo "${i}" "contains the following addresses" ${domains[$i]}
-  echo
+  echo "${i}" "contains the following addresses" ${domain_info[$i]}
 done
 
 # Iterates through domains array and assigns a list of addresses
 # that pass certain checks to their domain in the addresses array
 
-for DOMAIN in "${domains[@]}"; do
-  for ADDRESS_SHADOW in $(awk -F':' '{print $1}' $HOME/etc/$DOMAIN/shadow); do
-    for ADDRESS_PASSWD in $(awk -F':' '{print $1}' $HOME/etc/$DOMAIN/shadow); do
-      [[ $ADDRESS_SHADOW == $ADDRESS_PASSWD ]] && \
-      [[ -e $HOME/mail/$DOMAIN/$ADDRESS_SHADOW ]] && \
-      addresses[$DOMAIN]="$ADDRESS_PASSWD"
+for domain in "${!domain_info[@]}"; do
+  [[ -e $HOME/etc/$domain/passwd ]] && \
+  [[ -e $HOME/etc/$domain/shadow ]] && \
+  [[ $(wc -l $HOME/etc/$domain/shadow) == $(wc -l $HOME/etc/$domain/passwd) ]] || \
+  if [[ $(wc -l $HOME/etc/$domain/shadow) > $(wc -l $HOME/etc/$domain/passwd) ]] ; then
+    for address in $(awk -F':' '{print $1}' $HOME/etc/$domain/shadow); do
+      if grep -q $address $HOME/etc/$domain/passwd; then
+        continue
+      else echo "$address""@""$domain"" may have issues!"
+      fi
     done
-  done
+  fi
 done
 
-echo -e "\nIf an address does not appear in this list, check" \
-" $HOME/etc/<domain>/{shadow,passwd} for the missing entries, $HOME/mail/<domain> for content," \
-"and potentially run mailperm.\n"
-for i in "${!addresses[@]}"; do
-  echo -e "${addresses[$i]}""@""$i"
-done
+
+#echo -e "\nThe addresses in this list may have issues, check" \
+#" $HOME/etc/<domain>/{shadow,passwd} for the missing entries, $HOME/mail/<domain> for content," \
+#"and potentially run mailperm.\n"
+
+
 
 # Checks for orphaned entries in $HOME/etc/$DOMAIN/{shadow,passwd}
 # TODO add uapi loop that recreates addresses if user says "yes" for each domain
