@@ -60,7 +60,7 @@ hash_checker(){
 for i in $(get_addresses); do
   address="$(echo $i | cut -d'@' -f1)"
   domain="$( echo $i | cut -d'@' -f2)"
-  domain_info["$domain"]+="$address "
+  domain_info[$domain]+="$address "
 done
 
 # Prints addresses in $HOME/mail under each domain
