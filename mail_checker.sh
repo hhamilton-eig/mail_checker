@@ -4,9 +4,7 @@
 
 declare -A domain_info
 
-# e.g. - domain_info[$domain]="admin|info|contact, total storage , perms check , DNS info/checks"
-
-## Functions go here ##
+## Functions ##
 
 # Prints a list of domains present in $HOME/mail
 
@@ -22,7 +20,7 @@ get_addresses(){
   | awk 'BEGIN {FS="/"; OFS="@"} {print $6, $5}'
 }
 
-# TODO make this output nicer ?
+# TODO make this output nicer?
 # Grabs and prints sizes
 
 get_size(){
@@ -31,16 +29,16 @@ get_size(){
 
 # Iterates through output of get_addresses and pairs address names with their domain in the info array
 
-
 for i in $(get_addresses); do
   address=$( echo $i | cut -d'@' -f1)
   domain=$( echo $i | cut -d'@' -f2)
   domain_info["$domain"]+="$address|"
 done
 
-for i in "${!domain_info[@]}"; do
-  echo -e "\n${i}" "contains the following addresses" ${domain_info[$i]}
-done
+# Echo test of array contents
+#for i in "${!domain_info[@]}"; do
+#  echo -e "\n${i}" "contains the following addresses" ${domain_info[$i]}
+#done
 
 # Iterates through domains and performs shadow/passwd file checks
 
@@ -70,6 +68,7 @@ done
 
 # TODO add uapi loop that recreates addresses if user says "yes" for each domain
 
+# TODO make output prettier
 # Total size of each domain
 
 echo -e "\nTotal mail size by domain:\n"
@@ -78,15 +77,16 @@ for domain in "${!domain_info[@]}"; do
   echo "$(get_size $domain)"
 done
 
-# TODO quotas, mail count for each box, inbox/sent/trash DU breakdown
-# TODO Check for forwarders, autoresponders, filters
+# TODO mail count for each box, inbox/sent/trash DU breakdown
+# Size breakdown of addresses
 
 echo -e "\nTotal mail size by address:\n"
 
 for address in "${domain_info[@]}"; do
-  echo $(get_size $adress)
+  echo $(get_size $address)
 done
 
+# TODO Check for forwarders, autoresponders, filters, quotas
 
 # TODO Do MX check (IP , remote/local, SPF/DKIM)
 
