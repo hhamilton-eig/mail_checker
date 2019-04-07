@@ -4,7 +4,11 @@
 
 declare -A domain_info
 
+<<<<<<< HEAD
 ## Functions ##
+=======
+## Functions go here ##
+>>>>>>> array_refactor
 
 # Prints a list of domains present in $HOME/mail
 
@@ -20,49 +24,70 @@ get_addresses(){
   | awk 'BEGIN {FS="/"; OFS="@"} {print $6, $5}'
 }
 
-# TODO make this output nicer?
+# Prints DNS info with trailing "." trimmed
+# get_mx $domain $record
+
+get_dns(){
+  dig +nocmd $1 $2 +multiline +noall +answer | sed -r 's/\.(\s|$)/ /g'
+}
+
+# TODO make this output nicer
+>>>>>>> array_refactor
 # Grabs and prints sizes
 
 get_size(){
         du -sh $HOME/mail/$1/$2;
 }
 
-# Iterates through output of get_addresses and pairs address names with their domain in the info array
+# Runs some checks on addresses in shadow and passwd for a given domain
+# hash_checker domain (passwd|shadow) (passwd|shadow)
+# TODO add perm checking to these 2 files
+
+hash_checker(){
+  for address in $(awk -F':' '{print $1}' $HOME/etc/$1/$2); do
+    if grep -q $address $HOME/etc/$domain/$3 && \
+    [[ -e $HOME/mail/$1/$address ]]; then
+      continue
+    else
+      echo -e "\n$address@$domain may have issues. Check that"\
+      "address exists in $HOME/mail/${1}, has entries in"\
+      "$HOME/etc/$1/{shadow,passwd}, and that permissions are correct."
+    fi
+  done
+}
+
+# Iterates through output of get_addresses and pairs address names with 
+# their domain in the domain_info array
+
+# TODO find a way to look in passwd, shadow, and maildir for addresses in this list
+# TODO find a way to capture domain list from /var/cpanel/userdata/$(whoami)/main
 
 for i in $(get_addresses); do
-  address=$( echo $i | cut -d'@' -f1)
-  domain=$( echo $i | cut -d'@' -f2)
-  domain_info["$domain"]+="$address|"
+  address="$(echo $i | cut -d'@' -f1)"
+  domain="$( echo $i | cut -d'@' -f2)"
+  domain_info["$domain"]+="$address "
 done
 
-# Echo test of array contents
-#for i in "${!domain_info[@]}"; do
-#  echo -e "\n${i}" "contains the following addresses" ${domain_info[$i]}
-#done
+# Prints addresses in $HOME/mail under each domain
+
+for domain in "${!domain_info[@]}"; do
+  echo -e "\nThese addresses are present in ${HOME}/mail/${domain}:"
+  echo
+  for address in $(echo "${domain_info[$domain]}"); do
+    echo "${address}@${domain}"
+  done
+done
 
 # Iterates through domains and performs shadow/passwd file checks
 
 for domain in "${!domain_info[@]}"; do
   if [[ -e $HOME/etc/$domain/passwd ]] && \
-  [[ -e $HOME/etc/$domain/shadow ]] && \
-  [[ $(wc -l $HOME/etc/$domain/shadow) != $(wc -l $HOME/etc/$domain/passwd) ]] ; then
-    if [[ $(wc -l $HOME/etc/$domain/shadow) > $(wc -l $HOME/etc/$domain/passwd) ]] ; then
-      for address in $(awk -F':' '{print $1}' $HOME/etc/$domain/shadow); do
-        if grep -q $address $HOME/etc/$domain/passwd; then
-          continue
-        else 
-          echo -e "\n$address@$domain may have issues"
-        fi
-      done
-    else
-      for address in $(awk -F':' '{print $1}' $HOME/etc/$domain/passwd); do
-        if grep -q $address $HOME/etc/$domain/shadow; then
-          continue
-        else
-          echo -e "\n$address@$domain may have issues"
-        fi
-      done
-    fi
+  [[ -e $HOME/etc/$domain/shadow ]]; then
+    hash_checker $domain shadow passwd
+    hash_checker $domain passwd shadow
+  else
+    echo -e "\nThere is something wrong with the shadow/passwd files for ${domain}." \
+    "Check that they exist and that permissions are correct.\n"
   fi
 done
 
@@ -77,23 +102,35 @@ for domain in "${!domain_info[@]}"; do
   echo "$(get_size $domain)"
 done
 
-# TODO mail count for each box, inbox/sent/trash DU breakdown
-# Size breakdown of addresses
+# Total size of each address in $HOME/mail
 
 echo -e "\nTotal mail size by address:\n"
 
-for address in "${domain_info[@]}"; do
-  echo $(get_size $address)
+for domain in "${!domain_info[@]}"; do
+  for address in $(echo "${domain_info[$domain]}"); do
+    echo "${address}@${domain} - $(get_size $domain $address)"
+  done
+  echo
 done
 
-# TODO Check for forwarders, autoresponders, filters, quotas
+# TODO quotas, mail count for each box, inbox/sent/trash DU breakdown
 
-# TODO Do MX check (IP , remote/local, SPF/DKIM)
+# TODO Check for forwarders, autoresponders, filters
+
+# Checks and prints NS + MX info for domains in array
+
+for domain in "${!domain_info[@]}"; do
+  echo -e "DNS checks for ${domain}:\n"
+  get_dns $domain ns
+  echo
+  get_dns $domain mx
+  echo
+done
+
+# TODO Check remote/local, SPF/DKIM
 
 # TODO Check for exim/dovecot logs if possible
 
 # TODO Check for top recipients/senders
 
 # TODO Check and warn for incorrect perms
-
-echo
