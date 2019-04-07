@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Array for holding info about domains ##
+## Arrays ##
 
 declare -A domain_info
 
@@ -31,15 +31,15 @@ get_size(){
 
 # Iterates through output of get_addresses and pairs address names with their domain in the info array
 
-for address in $(get_addresses); do
-  $address | cut -d'@' -f2 
-  domain_info["$domain"]+="$address"
+for i in $(get_addresses); do
+  address=$( echo $i | cut -d'@' -f1)
+  domain=$( echo $i | cut -d'@' -f2)
+  domain_info["$domain"]+="$address|"
 done
 
-
 for i in "${!domain_info[@]}"; do
-echo -e "${domain_info[$i]}" "$i"
-echo
+  echo "${i}" "contains the following addresses" ${domains[$i]}
+  echo
 done
 
 # Iterates through domains array and assigns a list of addresses
