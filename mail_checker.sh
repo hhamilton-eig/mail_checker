@@ -4,8 +4,6 @@
 
 declare -A domain_info
 
-# e.g. - domain_info[$domain]="admin|info|contact, total storage , perms check , DNS info/checks"
-
 ## Functions go here ##
 
 # Prints a list of domains present in $HOME/mail
@@ -22,6 +20,13 @@ get_addresses(){
   | awk 'BEGIN {FS="/"; OFS="@"} {print $6, $5}'
 }
 
+# Prints DNS info with trailing "." trimmed
+# get_mx $domain $record
+
+get_mx(){
+  dig +nocmd $1 $2 +multiline +noall +answer | sed -r 's/\.(\s|$)/ /g'
+}
+
 # TODO make this output nicer ?
 # Grabs and prints sizes
 
@@ -29,42 +34,45 @@ get_size(){
         du -sh $HOME/mail/$1/$2;
 }
 
-# Iterates through output of get_addresses and pairs address names with their domain in the info array
+# Runs some checks on addresses in shadow and passwd for a given domain
+# hash_checker domain (passwd|shadow) (passwd|shadow)
 
+hash_checker(){
+  for address in $(awk -F':' '{print $1}' $HOME/etc/$1/$2); do
+    if grep -q $address $HOME/etc/$domain/$3 && \
+    [[ -e $HOME/mail/$1/$address ]]; then
+      continue
+    else
+      echo -e "\n$address@$domain may have issues. Check that"\
+      "address exists in $HOME/mail/${1}, has entries in"\
+      "$HOME/etc/$1/{shadow,passwd}, and that permissions are correct."
+    fi
+  done
+}
+
+# Iterates through output of get_addresses and pairs address names with 
+# their domain in the domain_info array
 
 for i in $(get_addresses); do
-  address=$( echo $i | cut -d'@' -f1)
-  domain=$( echo $i | cut -d'@' -f2)
-  domain_info["$domain"]+="$address|"
+  address="$(echo $i | cut -d'@' -f1)"
+  domain="$( echo $i | cut -d'@' -f2)"
+  domain_info["$domain"]+="$address "
 done
 
 for i in "${!domain_info[@]}"; do
-  echo -e "\n${i}" "contains the following addresses" ${domain_info[$i]}
+  echo -e "\n${i}" "contains the following addresses:\n\n${domain_info[$i]}"
 done
 
 # Iterates through domains and performs shadow/passwd file checks
 
 for domain in "${!domain_info[@]}"; do
   if [[ -e $HOME/etc/$domain/passwd ]] && \
-  [[ -e $HOME/etc/$domain/shadow ]] && \
-  [[ $(wc -l $HOME/etc/$domain/shadow) != $(wc -l $HOME/etc/$domain/passwd) ]] ; then
-    if [[ $(wc -l $HOME/etc/$domain/shadow) > $(wc -l $HOME/etc/$domain/passwd) ]] ; then
-      for address in $(awk -F':' '{print $1}' $HOME/etc/$domain/shadow); do
-        if grep -q $address $HOME/etc/$domain/passwd; then
-          continue
-        else 
-          echo -e "\n$address@$domain may have issues"
-        fi
-      done
-    else
-      for address in $(awk -F':' '{print $1}' $HOME/etc/$domain/passwd); do
-        if grep -q $address $HOME/etc/$domain/shadow; then
-          continue
-        else
-          echo -e "\n$address@$domain may have issues"
-        fi
-      done
-    fi
+  [[ -e $HOME/etc/$domain/shadow ]]; then
+    hash_checker $domain shadow passwd
+    hash_checker $domain passwd shadow
+  else
+    echo -e "\nThere is something wrong with the shadow/passwd files for ${domain}." \
+    "Check that they exist and that permissions are correct.\n"
   fi
 done
 
@@ -83,8 +91,14 @@ done
 
 echo -e "\nTotal mail size by address:\n"
 
-for address in "${domain_info[@]}"; do
-  echo $(get_size $adress)
+for domains in "${!domain_info[@]}"; do
+  for domain in $domains; do
+    for addresses in "${domain_info[$domain]}"; do
+      for address in $addresses; do
+        echo "${address}@${domain} - $(get_size $domain $address)"
+      done
+    done
+  done
 done
 
 
