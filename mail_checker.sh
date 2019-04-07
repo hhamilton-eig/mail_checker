@@ -42,8 +42,7 @@ for i in "${!domain_info[@]}"; do
   echo "${i}" "contains the following addresses" ${domain_info[$i]}
 done
 
-# Iterates through domains array and assigns a list of addresses
-# that pass certain checks to their domain in the addresses array
+# Iterates through domains and performs shadow/passwd file checks
 
 for domain in "${!domain_info[@]}"; do
   [[ -e $HOME/etc/$domain/passwd ]] && \
@@ -54,18 +53,13 @@ for domain in "${!domain_info[@]}"; do
       if grep -q $address $HOME/etc/$domain/passwd; then
         continue
       else 
-        echo "$address""@""$domain"" may have issues!"
+        echo "\nThe addresses in this list may have issues, check" \
+        "$HOME/etc/<domain>/{shadow,passwd} for the missing entries, $HOME/mail/<domain> for content," \
+        "and potentially run mailperm.\n"
       fi
     done
   fi
 done
-
-
-#echo -e "\nThe addresses in this list may have issues, check" \
-#" $HOME/etc/<domain>/{shadow,passwd} for the missing entries, $HOME/mail/<domain> for content," \
-#"and potentially run mailperm.\n"
-
-
 
 # Checks for orphaned entries in $HOME/etc/$DOMAIN/{shadow,passwd}
 # TODO add uapi loop that recreates addresses if user says "yes" for each domain
