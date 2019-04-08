@@ -109,9 +109,14 @@ done
 
 # TODO quotas, mail count for each box, inbox/sent/trash DU breakdown
 
+
 # TODO Check for forwarders, autoresponders, filters
+# Forwarders and autoresponders are found in /etc/valiases/${domain}
+# Filters are found in /etc/vfilters/${domain}
+
 
 # Checks and prints NS + MX info for domains in array
+# Find authoritative NS from WHOIS, do a cURL to workaround broke whois command
 
 for domain in "${!domain_info[@]}"; do
   echo -e "DNS checks for ${domain}:\n"
