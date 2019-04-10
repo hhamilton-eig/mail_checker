@@ -131,5 +131,8 @@ done
 # TODO Check for exim/dovecot logs if possible
 
 # TODO Check for top recipients/senders
+# Some Regex that captures 5, 10 of each? for 24 hours?
+
 
 # TODO Check and warn for incorrect perms
+# Probably just chmod 777 ~/mail/* && chown $USER.somebody ~/mail/* and then capture output of permfix
