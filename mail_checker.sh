@@ -56,10 +56,12 @@ hash_checker(){
 
 # TODO find a way to look in passwd, shadow, and maildir for addresses in this list
 # TODO find a way to capture domain list from /var/cpanel/userdata/$(whoami)/main
+# TODO check all vars http://tldp.org/LDP/abs/html/string-manipulation.html
+# https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
 
 for i in $(get_addresses); do
-  address="$(echo $i | cut -d'@' -f1)"
-  domain="$( echo $i | cut -d'@' -f2)"
+  address=${i%@*}
+  domain=${i#*@}
   domain_info[$domain]+="$address "
 done
 
