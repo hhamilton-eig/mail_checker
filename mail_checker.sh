@@ -51,11 +51,11 @@ hash_checker(){
   done
 }
 
+# TODO find a way to look in passwd, shadow, and maildir for addresses in this list (to capture max addresses)
+# TODO find a way to capture domain list from /var/cpanel/userdata/$(whoami)/main
+
 # Iterates through output of get_addresses and pairs address names with 
 # their domain in the domain_info array
-
-# TODO find a way to look in passwd, shadow, and maildir for addresses in this list
-# TODO find a way to capture domain list from /var/cpanel/userdata/$(whoami)/main
 
 for i in $(get_addresses); do
   address="$(echo $i | cut -d'@' -f1)"
@@ -107,16 +107,22 @@ for domain in "${!domain_info[@]}"; do
   echo
 done
 
-# TODO quotas, mail count for each box, inbox/sent/trash DU breakdown
+# TODO quotas
+
+# TODO mail count for address + each box, inbox/sent/trash 
+
+# TODO du breakdown of each mailbox
 
 
-# TODO Check for forwarders, autoresponders, filters
+# TODO Check for forwarders
 # Forwarders and autoresponders are found in /etc/valiases/${domain}
+# TODO Check for autoresponders
+
+# TODO Check for filters
 # Filters are found in /etc/vfilters/${domain}
 
-
 # Checks and prints NS + MX info for domains in array
-# Find authoritative NS from WHOIS, do a cURL to workaround broke whois command
+# Find authoritative NS from WHOIS, do a cURL to workaround broke whois command (segfault on shared)
 
 for domain in "${!domain_info[@]}"; do
   echo -e "DNS checks for ${domain}:\n"
@@ -126,13 +132,22 @@ for domain in "${!domain_info[@]}"; do
   echo
 done
 
-# TODO Check remote/local, SPF/DKIM
+# TODO Check remote/local (maybe not possible?)
+
+# TODO SPF
+
+# TODO DKIM
+
+# Ask for DKIM selector when run, or just assume default?
+# Possible selectors: default, google, dkim
+# Search through mail headers for dkim?
+
+# TODO DMARC
 
 # TODO Check for exim/dovecot logs if possible
 
 # TODO Check for top recipients/senders
 # Some Regex that captures 5, 10 of each? for 24 hours?
-
 
 # TODO Check and warn for incorrect perms
 # Probably just chmod 777 ~/mail/* && chown $USER.somebody ~/mail/* and then capture output of permfix
