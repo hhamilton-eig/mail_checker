@@ -51,15 +51,17 @@ hash_checker(){
   done
 }
 
-# TODO find a way to look in passwd, shadow, and maildir for addresses in this list (to capture max addresses)
-# TODO find a way to capture domain list from /var/cpanel/userdata/$(whoami)/main
-
 # Iterates through output of get_addresses and pairs address names with 
 # their domain in the domain_info array
 
+# TODO find a way to look in passwd, shadow, and maildir for addresses in this list
+# TODO find a way to capture domain list from /var/cpanel/userdata/$(whoami)/main
+# TODO check all vars http://tldp.org/LDP/abs/html/string-manipulation.html
+# https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
+
 for i in $(get_addresses); do
-  address="$(echo $i | cut -d'@' -f1)"
-  domain="$( echo $i | cut -d'@' -f2)"
+  address=${i%@*}
+  domain=${i#*@}
   domain_info[$domain]+="$address "
 done
 
@@ -107,6 +109,7 @@ for domain in "${!domain_info[@]}"; do
   echo
 done
 
+<<<<<<< HEAD
 # TODO quotas
 
 # TODO mail count for address + each box, inbox/sent/trash 
@@ -123,6 +126,18 @@ done
 
 # Checks and prints NS + MX info for domains in array
 # Find authoritative NS from WHOIS, do a cURL to workaround broke whois command (segfault on shared)
+=======
+# TODO quotas, mail count for each box, inbox/sent/trash DU breakdown
+
+
+# TODO Check for forwarders, autoresponders, filters
+# Forwarders and autoresponders are found in /etc/valiases/${domain}
+# Filters are found in /etc/vfilters/${domain}
+
+
+# Checks and prints NS + MX info for domains in array
+# Find authoritative NS from WHOIS, do a cURL to workaround broke whois command
+>>>>>>> 5473d0e6e70ab6ba7390f10050f4da628e92e548
 
 for domain in "${!domain_info[@]}"; do
   echo -e "DNS checks for ${domain}:\n"
@@ -131,6 +146,7 @@ for domain in "${!domain_info[@]}"; do
   get_dns $domain mx
   echo
 done
+<<<<<<< HEAD
 
 # TODO Check remote/local (maybe not possible?)
 
@@ -143,6 +159,10 @@ done
 # Search through mail headers for dkim?
 
 # TODO DMARC
+=======
+
+# TODO Check remote/local, SPF/DKIM
+>>>>>>> 5473d0e6e70ab6ba7390f10050f4da628e92e548
 
 # TODO Check for exim/dovecot logs if possible
 
