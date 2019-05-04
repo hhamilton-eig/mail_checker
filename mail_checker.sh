@@ -109,7 +109,6 @@ for domain in "${!domain_info[@]}"; do
   echo
 done
 
-<<<<<<< HEAD
 # TODO quotas
 
 # TODO mail count for address + each box, inbox/sent/trash 
@@ -126,18 +125,6 @@ done
 
 # Checks and prints NS + MX info for domains in array
 # Find authoritative NS from WHOIS, do a cURL to workaround broke whois command (segfault on shared)
-=======
-# TODO quotas, mail count for each box, inbox/sent/trash DU breakdown
-
-
-# TODO Check for forwarders, autoresponders, filters
-# Forwarders and autoresponders are found in /etc/valiases/${domain}
-# Filters are found in /etc/vfilters/${domain}
-
-
-# Checks and prints NS + MX info for domains in array
-# Find authoritative NS from WHOIS, do a cURL to workaround broke whois command
->>>>>>> 5473d0e6e70ab6ba7390f10050f4da628e92e548
 
 for domain in "${!domain_info[@]}"; do
   echo -e "DNS checks for ${domain}:\n"
