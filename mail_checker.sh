@@ -133,7 +133,6 @@ for domain in "${!domain_info[@]}"; do
   get_dns $domain mx
   echo
 done
-<<<<<<< HEAD
 
 # TODO Check remote/local (maybe not possible?)
 
@@ -146,10 +145,6 @@ done
 # Search through mail headers for dkim?
 
 # TODO DMARC
-=======
-
-# TODO Check remote/local, SPF/DKIM
->>>>>>> 5473d0e6e70ab6ba7390f10050f4da628e92e548
 
 # TODO Check for exim/dovecot logs if possible
 
