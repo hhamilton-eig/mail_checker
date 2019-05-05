@@ -26,9 +26,6 @@ Commands:
 # Logs/config here?
 
 case "$1" in
-  *)
-    cli_help
-    ;;
   breakdown|b)
     "$mailchk_workdir/commands/breakdown"
     ;;
@@ -41,16 +38,8 @@ case "$1" in
   perms|p)
     "$mailchk_workdir/commands/perms"
     ;;
+  *)
+    cli_help
+    ;;
 esac
-
-# TODO look in passwd, shadow, and maildir for addresses then compare
-# TODO find a way to capture domain list from /var/cpanel/userdata/$(whoami)/main
-
-# Pairs address@domain with domain in the domain_info array
-
-for i in $(get_addresses); do
-  address=${i%@*}
-  domain=${i#*@}
-  domain_info[$domain]+="$address "
-done
 

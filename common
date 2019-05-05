@@ -50,3 +50,14 @@ hash_checker(){
     fi
   done
 }
+
+# TODO look in passwd, shadow, and maildir for addresses then compare
+# TODO find a way to capture domain list from /var/cpanel/userdata/$(whoami)/main
+
+# Pairs address@domain with domain in the domain_info array
+
+for i in $(get_addresses); do
+  address=${i%@*}
+  domain=${i#*@}
+  domain_info[$domain]+="$address "
+done
