@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# Prints addresses in $HOME/mail under each domain
+
+for domain in "${!domain_info[@]}"; do
+  echo -e "\nThese addresses are present in ${HOME}/mail/${domain}:"
+  echo
+  for address in $(echo "${domain_info[$domain]}"); do
+    echo "${address}@${domain}"
+  done
+done
+
 # Total size of each domain
 
 echo -e "\nTotal mail size by domain:\n"

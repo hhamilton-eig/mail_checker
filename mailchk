@@ -1,28 +1,56 @@
 #!/bin/bash
 
-source ./common
+set -e
+export mailchk_workdir=$(cd $(dirname $0) && pwd)
+. "$mailchk_workdir/common"
 
-# Iterates through output of get_addresses and pairs address names with 
-# their domain in the domain_info array
+cli_help() {
+  cli_name=${0##*/}
+  echo "
+$cli_name
+cPanel Mail Checker CLI
+Version: $(cat $mailchk_workdir/VERSION)
+https://github.com/TheGingeraffe/mail_checker/
+
+Usage: $cli_name [command]
+
+Commands:
+  *              Help
+  (d)ns          DNS Check
+  (b)reakdown    Storage breakdown
+  (f)ull         Run all options
+"
+  exit 1
+}
+
+# Logs/config here?
+
+case "$1" in
+  *)
+    cli_help
+    ;;
+  breakdown|b)
+    "$mailchk_workdir/commands/breakdown"
+    ;;
+  dns|d)
+    "$mailchk_workdir/commands/dns_check"
+    ;;
+  integrity|i)
+    "$mailchk_workdir/commands/integrity"
+    ;;
+  perms|p)
+    "$mailchk_workdir/commands/perms"
+    ;;
+esac
 
 # TODO look in passwd, shadow, and maildir for addresses then compare
 # TODO find a way to capture domain list from /var/cpanel/userdata/$(whoami)/main
 
-# Pairs address@domain
+# Pairs address@domain with domain in the domain_info array
 
 for i in $(get_addresses); do
   address=${i%@*}
   domain=${i#*@}
   domain_info[$domain]+="$address "
-done
-
-# Prints addresses in $HOME/mail under each domain
-
-for domain in "${!domain_info[@]}"; do
-  echo -e "\nThese addresses are present in ${HOME}/mail/${domain}:"
-  echo
-  for address in $(echo "${domain_info[$domain]}"); do
-    echo "${address}@${domain}"
-  done
 done
 
