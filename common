@@ -1,0 +1,52 @@
+#!/bin/bash
+
+## Arrays ##
+
+declare -A domain_info
+
+## Functions ##
+
+# Prints a list of domains present in $HOME/mail
+
+get_domains(){
+  find $HOME/etc/ -regextype posix-egrep -regex '(\/\w+){4}\.(((?!rc )\w+\.\w+)|\w+$)' \
+  | cut -d'/' -f5
+}
+
+# Prints a list of addresses present in $HOME/mail
+
+get_addresses(){
+  find $HOME/mail/*/ -maxdepth 1 -regextype posix-egrep  -regex '(\/\w+){4}\.\w+\/\S+' \
+  | awk 'BEGIN {FS="/"; OFS="@"} {print $6, $5}'
+}
+
+# Prints DNS info with trailing "." trimmed
+# get_mx $domain $record
+
+get_dns(){
+  dig +nocmd $1 $2 +multiline +noall +answer | sed -r 's/\.(\s|$)/ /g'
+}
+
+# TODO make this output nicer
+# Grabs and prints sizes
+
+get_size(){
+        du -sh $HOME/mail/$1/$2;
+}
+
+# Runs some checks on addresses in shadow and passwd for a given domain
+# hash_checker domain (passwd|shadow) (passwd|shadow)
+# TODO add perm checking to these 2 files
+
+hash_checker(){
+  for address in $(awk -F':' '{print $1}' $HOME/etc/$1/$2); do
+    if grep -q $address $HOME/etc/$domain/$3 && \
+    [[ -e $HOME/mail/$1/$address ]]; then
+      continue
+    else
+      echo -e "\n$address@$domain may have issues. Check that"\
+      "address exists in $HOME/mail/${1}, has entries in"\
+      "$HOME/etc/$1/{shadow,passwd}, and that permissions are correct."
+    fi
+  done
+}
