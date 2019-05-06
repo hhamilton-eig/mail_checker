@@ -43,3 +43,13 @@ case "$1" in
     ;;
 esac
 
+# Pairs $address@$domain and pairs with domain in domain_info array
+# TODO look in passwd, shadow, and maildir for addresses then compare
+# TODO find a way to capture domain list from /var/cpanel/userdata/$(whoami)/main
+
+for i in $(get_addresses); do
+  address=${i%@*}
+  domain=${i#*@}
+  domain_info[$domain]+="$address "
+done
+
