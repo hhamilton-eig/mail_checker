@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. "$mailchk_workdir/common"
+
 # TODO Find authoritative NS from WHOIS, do a cURL to workaround broke whois command (segfault on shared)
 # Checks and prints NS + MX info for domains in array
 for domain in "${!domain_info[@]}"; do

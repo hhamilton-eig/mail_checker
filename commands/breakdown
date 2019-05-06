@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Prints addresses in $HOME/mail under each domain
+. "$mailchk_workdir/common"
 
 for domain in "${!domain_info[@]}"; do
   echo -e "\nThese addresses are present in ${HOME}/mail/${domain}:"

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. "$mailchk_workdir/common"
+
 # Iterates through domains and performs shadow/passwd file checks
 
 for domain in "${!domain_info[@]}"; do
