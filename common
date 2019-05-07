@@ -27,6 +27,18 @@ get_dns(){
   dig +nocmd $1 $2 +multiline +noall +answer | sed -r 's/\.(\s|$)/ /g'
 }
 
+get_spf(){
+  spf="$(dig $1 txt | awk -F'"' '/spf/{print $2}')"
+}
+
+get_dkim(){
+  dkim=$(dig "${2:-default}._domainkey.${1}" txt +nocmd +short \
+| awk -F';|=|"|\\\\' '{print $9$11}')
+  pretty_dkim="-----BEGIN PUBLIC KEY-----\n\
+$dkim\n\
+-----END PUBLIC KEY-----"
+}
+
 # TODO make this output nicer
 # Grabs and prints sizes
 

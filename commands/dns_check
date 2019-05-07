@@ -2,54 +2,38 @@
 
 . "$mailchk_workdir/common"
 
-# TODO Find authoritative NS from WHOIS, do a cURL to workaround broke whois command (segfault on shared)
-# Checks and prints NS + MX info for domains in array
 for domain in "${!domain_info[@]}"; do
-  echo -e "\nDNS checks for ${domain}:\n"
+  echo -e "\nDNS checks for ${domain}:\n\nNS:\n"
   get_dns $domain ns
-  echo
+  echo -e "\nMX:\n"
   get_dns $domain mx
   echo
+  get_spf $domain
+    if [[ $(echo $spf | head -c1 | wc -c) -ne 0 ]]; then
+      echo -e "SPF:\n\n$spf"
+    else
+      echo -e "$domain does not appear to have an SPF configured!"
+    fi
+  get_dkim $domain
+    if [[ ${#dkim} > 2 ]]; then
+      echo -e "\nDKIM:\n"
+      echo -e "$pretty_dkim" | fold -w 64 | openssl rsa -noout -text -pubin | head -1
+      echo -e "\n$pretty_dkim" | fold -w 64
+    else
+      echo -e "\n$domain does not appear to have a DKIM configured!"
+    fi
+echo
 done
 
-# Stores SPF record
 
-spf="$(dig $2 txt | awk -F'"' '/spf/{print $2}')"
-
-# Checks if SPF is greater than 0 chars
-
-if [[ $(echo $spf | head -c1 | wc -c) -ne 0 ]]; then
-  echo -e "$2's SPF - \n$spf"
-else
-  echo -e "\n$2 does not appear to have an SPF configured!"
-fi
 
 # Does not cover all DKIMS, fix for default._domainkey.recruiterhq.ca.
 # {print $6} with current awk
-
-# Raw DKIM key value
-dkim=$(dig "${3}._domainkey.${2}" txt +nocmd +short \
-| awk -F';|=|"|\\\\' '{print $9$11}')
-
-# Formatted key for openssl
-pretty_dkim="-----BEGIN PUBLIC KEY-----\n\
-$dkim\n\
------END PUBLIC KEY-----"
-
-# Checks if dkim variable has length greater than 2 chars to weed out ""
-if [[ ${#dkim} > 2 ]]; then
-  echo -e "\n${2}'s DKIM -\n"
-  echo -e $pretty_dkim | fold -w 64 | openssl rsa -noout -text -pubin | head -1
-  echo
-  echo -e $pretty_dkim | fold -w 64
-else
-  echo -e "\n$2 does not appear to have a DKIM configured!"
-fi
-echo
+# probably do if output of first awk empty, do second awk
 
 # Ask for DKIM selector when run, or just assume default?
 # Possible selectors: default, google, dkim
 # Search through mail headers for dkim?
 
 # TODO DMARC
-
+# TODO get dns from auth NS via WHOIS (curl for segfaulted whois on shared?)

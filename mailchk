@@ -17,10 +17,10 @@ https://github.com/TheGingeraffe/mail_checker/
 Usage: $cli_name [command]
 
 Commands:
-  *              Help
-  (d)ns          DNS Check
-  (b)reakdown    Storage breakdown
-  (f)ull         Run all options
+  *               Help
+  -(d)ns          DNS Check
+  -(b)reakdown    Storage breakdown
+  -(f)ull         Run all options
 "
   exit 1
 }
@@ -28,16 +28,16 @@ Commands:
 # Logs/config here?
 
 case "$1" in
-  breakdown|b)
+  -breakdown|-b)
     "$mailchk_workdir/commands/breakdown"
     ;;
-  dns|d)
-    "$mailchk_workdir/commands/dns_check" "$@"
+  -dns|-d)
+    "$mailchk_workdir/commands/dns_check"
     ;;
-  integrity|i)
+  -integrity|-i)
     "$mailchk_workdir/commands/integrity"
     ;;
-  perms|p)
+  -perms|-p)
     "$mailchk_workdir/commands/perms"
     ;;
   *)
