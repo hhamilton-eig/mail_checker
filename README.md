@@ -1,2 +1,10 @@
-# mail_checker
-Summarizes a bunch of mail info in a cPanel environment
+mailchk
+cPanel Mail Checker CLI
+
+Usage: mailchk [command]
+
+Commands:
+  *               Help
+  -(d)ns          DNS Check
+  -(b)reakdown    Storage breakdown
+  -(f)ull         Run all options
