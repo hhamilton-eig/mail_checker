@@ -2,29 +2,50 @@
 
 . "$mailchk_workdir/common"
 
-for domain in "${!domain_info[@]}"; do
-  echo -e "\nDNS checks for ${domain}:\n\nNS:\n"
-  get_dns $domain ns
+if [[ ! -z "$2" ]]; then
+  echo -e "\nDNS checks for ${2}:\n\nNS:\n"
+  get_dns $2 ns
   echo -e "\nMX:\n"
-  get_dns $domain mx
+  get_dns $2 mx
   echo
-  get_spf $domain
+  get_spf $2
     if [[ $(echo $spf | head -c1 | wc -c) -ne 0 ]]; then
       echo -e "SPF:\n\n$spf"
     else
-      echo -e "$domain does not appear to have an SPF configured!"
+      echo -e "$2 does not appear to have an SPF configured!"
     fi
-  get_dkim $domain
+  get_dkim $2
     if [[ ${#dkim} > 2 ]]; then
       echo -e "\nDKIM:\n"
       echo -e "$pretty_dkim" | fold -w 64 | openssl rsa -noout -text -pubin | head -1
       echo -e "\n$pretty_dkim" | fold -w 64
     else
-      echo -e "\n$domain does not appear to have a DKIM configured!"
+      echo -e "\n$2 does not appear to have a DKIM configured!"
     fi
-echo
+else
+  for domain in "${!domain_info[@]}"; do
+    echo -e "\nDNS checks for ${domain}:\n\nNS:\n"
+    get_dns $domain ns
+    echo -e "\nMX:\n"
+    get_dns $domain mx
+    echo
+    get_spf $domain
+      if [[ $(echo $spf | head -c1 | wc -c) -ne 0 ]]; then
+        echo -e "SPF:\n\n$spf"
+      else
+        echo -e "$domain does not appear to have an SPF configured!"
+      fi
+    get_dkim $domain
+      if [[ ${#dkim} > 2 ]]; then
+        echo -e "\nDKIM:\n"
+        echo -e "$pretty_dkim" | fold -w 64 | openssl rsa -noout -text -pubin | head -1
+        echo -e "\n$pretty_dkim" | fold -w 64
+      else
+        echo -e "\n$domain does not appear to have a DKIM configured!"
+      fi
+  echo
 done
-
+fi
 
 
 # Does not cover all DKIMS, fix for default._domainkey.recruiterhq.ca.
