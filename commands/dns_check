@@ -1,0 +1,40 @@
+#!/bin/bash
+
+. "$mailchk_workdir/common"
+
+for domain in "${!domain_info[@]}"; do
+  echo -e "\nDNS checks for ${domain}:\n\nNS:\n"
+  get_dns $domain ns
+  echo -e "\nMX:\n"
+  get_dns $domain mx
+  echo
+  get_spf $domain
+    if [[ $(echo $spf | head -c1 | wc -c) -ne 0 ]]; then
+      echo -e "SPF:\n\n$spf"
+    else
+      echo -e "$domain does not appear to have an SPF configured!"
+    fi
+  get_dkim $domain
+    if [[ ${#dkim} > 2 ]]; then
+      echo -e "\nDKIM:\n"
+      echo -e "$pretty_dkim" | fold -w 64 | openssl rsa -noout -text -pubin | head -1
+      echo -e "\n$pretty_dkim" | fold -w 64
+    else
+      echo -e "\n$domain does not appear to have a DKIM configured!"
+    fi
+echo
+done
+
+
+
+# Does not cover all DKIMS, fix for default._domainkey.recruiterhq.ca.
+# {print $6} with current awk
+# probably do if output of first awk empty, do second awk
+
+# Ask for DKIM selector when run, or just assume default?
+# Possible selectors: default, google, dkim
+# Search through mail headers for dkim?
+
+# TODO DMARC
+# TODO get dns from auth NS via WHOIS (curl for segfaulted whois on shared?)
+# TODO allow reading domain(s) from stdin or file as well as domain_info
