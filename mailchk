@@ -32,7 +32,7 @@ case "$1" in
     "$mailchk_workdir/commands/breakdown"
     ;;
   dns|d)
-    "$mailchk_workdir/commands/dns_check"
+    "$mailchk_workdir/commands/dns_check" "$@"
     ;;
   integrity|i)
     "$mailchk_workdir/commands/integrity"
