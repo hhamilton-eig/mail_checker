@@ -22,6 +22,7 @@ if [[ ! -z "$2" ]]; then
     else
       echo -e "\n$2 does not appear to have a DKIM configured!"
     fi
+  echo
 else
   for domain in "${!domain_info[@]}"; do
     echo -e "\nDNS checks for ${domain}:\n\nNS:\n"
