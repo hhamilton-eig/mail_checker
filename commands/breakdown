@@ -34,3 +34,5 @@ done
 # TODO mail count for address + each box, inbox/sent/trash
 
 # TODO quotas
+
+# TODO accept domain or address as parameter
