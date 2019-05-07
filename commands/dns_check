@@ -37,3 +37,4 @@ done
 
 # TODO DMARC
 # TODO get dns from auth NS via WHOIS (curl for segfaulted whois on shared?)
+# TODO allow reading domain(s) from stdin or file as well as domain_info
