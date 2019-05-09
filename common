@@ -39,11 +39,17 @@ $dkim\n\
 -----END PUBLIC KEY-----"
 }
 
+get_dmarc(){
+  dmarc=$(dig findmypolitician.org txt +noall +answer +short | grep 'DMARC' | tr -d \")
+}
+  
+
+
 # TODO make this output nicer
 # Grabs and prints sizes
 
 get_size(){
-        du -sh $HOME/mail/$1/$2;
+        du -sh $HOME/mail/$1/$2
 }
 
 # Runs some checks on addresses in shadow and passwd for a given domain
