@@ -17,7 +17,7 @@ Commands:
    
 \* Help
 
--(d)ns          DNS Check
+-(d)ns          NS/MX/SPF/DKIM/DMARC check
 
 -(b)reakdown    Storage breakdown
 
