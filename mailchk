@@ -20,6 +20,7 @@ Commands:
   *               Help
   -(d)ns          DNS Check
   -(b)reakdown    Storage breakdown
+  -(i)ntegrity    Shadow/passwd/maildir checks
   -(f)ull         Run all options
 "
   exit 1
