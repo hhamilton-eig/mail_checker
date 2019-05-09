@@ -21,4 +21,6 @@ Commands:
 
 -(b)reakdown    Storage breakdown
 
+-(i)ntegrity    Shadow/passwd/maildir checks
+
 -(f)ull         Run all options
