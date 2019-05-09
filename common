@@ -62,9 +62,9 @@ hash_checker(){
     [[ -e $HOME/mail/$1/$address ]]; then
       continue
     else
-      echo -e "\n$address@$domain may have issues. Check that"\
-      "address exists in $HOME/mail/${1}, has entries in"\
-      "$HOME/etc/$1/{shadow,passwd}, and that permissions are correct."
+      echo -e "\n$address@$domain may have issues. Check that\
+ address exists in $HOME/mail/${1}, has entries in\
+ $HOME/etc/$1/{shadow,passwd}, and that permissions are correct." | fold -w 80 -s
     fi
   done
 }

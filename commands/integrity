@@ -11,8 +11,11 @@ for domain in "${!domain_info[@]}"; do
     hash_checker $domain passwd shadow
   else
     echo -e "\nThere is something wrong with the shadow/passwd files for ${domain}." \
-    "Check that they exist and that permissions are correct.\n"
+"Check that they exist and that permissions are correct.\n" | fold -w 80 -s
+
   fi
 done
+echo
 
+# TODO make all addresses appear in a list, don't repeat output over and over
 # TODO add uapi loop that recreates addresses if user says "yes" for each domain
