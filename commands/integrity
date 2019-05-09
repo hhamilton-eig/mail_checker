@@ -10,11 +10,25 @@ for domain in "${!domain_info[@]}"; do
     hash_checker $domain shadow passwd
     hash_checker $domain passwd shadow
   else
-    echo -e "\nThere is something wrong with the shadow/passwd files for ${domain}." \
-"Check that they exist and that permissions are correct.\n" | fold -w 80 -s
-
+    echo -e "\nThere is something wrong with the shadow/passwd files for ${domain}. \
+Check that they exist and that permissions are correct.\n" \
+    | fold -w 80 -s
   fi
 done
+
+if [[ "${#badaddresses[@]}" > 0 ]]; then
+  echo -e "\nThese addresses may have issues. Check that\
+ the address exists in $HOME/mail/\$DOMAIN, has entries in\
+ $HOME/etc/\$DOMAIN/{shadow,passwd}, and that permissions are correct.\n" \
+  | fold -w 80 -s
+  for address in "${badaddresses[@]}"; do
+    echo "$address"
+  done
+else
+  echo -e "All addresses for domains on the account passed are found in the \
+shadow/passwd files for \$DOMAIN and in $HOME/mail/\$DOMAIN."
+fi
+
 echo
 
 # TODO make all addresses appear in a list, don't repeat output over and over
