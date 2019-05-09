@@ -35,7 +35,7 @@ case "$1" in
     "$mailchk_workdir/commands/dns_check" "$@"
     ;;
   -integrity|-i)
-    "$mailchk_workdir/commands/integrity"
+    "$mailchk_workdir/commands/integrity" "$@"
     ;;
   -perms|-p)
     "$mailchk_workdir/commands/perms"
