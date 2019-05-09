@@ -40,6 +40,10 @@ case "$1" in
   -perms|-p)
     "$mailchk_workdir/commands/perms"
     ;;
+  -full|-f)
+    "$mailchk_workdir/commands/breakdown"
+    "$mailchk_workdir/commands/dns_check"
+    ;;
   *)
     cli_help
     ;;
