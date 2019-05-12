@@ -51,6 +51,11 @@ if [[ "${#badaddresses[@]}" > 0 ]]; then
   for address in "${badaddresses[@]}"; do
     echo "$address"
   done
+  echo
+  confirm "Would you like to attempt to repair these addresses? \
+WARNING: This will reset the password for each repaired address."
+
+
 else
   echo -e "All addresses for domains on the account passed are found in the \
 shadow/passwd files for \$DOMAIN and in $HOME/mail/\$DOMAIN."

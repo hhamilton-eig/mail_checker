@@ -52,6 +52,27 @@ get_size(){
         du -sh $HOME/mail/$1/$2
 }
 
+# Confirmation
+
+confirm(){
+while true; do
+  read -ep "$1 [yY/nN] " choice
+  case "$choice" in
+    y|Y )
+      echo "yes"
+      return
+      ;;
+    n|N )
+      echo "no"
+      break 2
+      ;;
+    * )
+      echo "invalid" >&2
+      ;;
+  esac
+done
+}
+
 # Runs some checks on addresses in shadow and passwd for a given domain
 # hash_checker domain (passwd|shadow) (passwd|shadow)
 # TODO add perm checking to these 2 files
