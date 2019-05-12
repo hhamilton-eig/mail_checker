@@ -3,6 +3,7 @@
 ## Arrays ##
 
 declare -A domain_info
+declare -A badaddresses
 
 ## Functions ##
 
@@ -83,7 +84,7 @@ hash_checker(){
     [[ -e $HOME/mail/$1/$address ]]; then
       continue
     else
-      badaddresses+=("$address"@"$domain")
+      badaddresses["$domain"]+="$address "
     fi
   done
 }
@@ -95,6 +96,6 @@ hash_checker(){
 for i in $(get_addresses); do
   address=${i%@*}
   domain=${i#*@}
-  domain_info[$domain]+="$address "
+  domain_info["$domain"]+="$address "
 done
 

@@ -21,9 +21,11 @@ Check that they exist and that permissions are correct.\n" \
 the address exists in $HOME/mail/\$DOMAIN, has entries in \
 $HOME/etc/\$DOMAIN/{shadow,passwd}, and that permissions are correct.\n" \
     | fold -w 80 -s
-  for address in "${badaddresses[@]}"; do
-    echo "$address"
-  done 
+    for domain in "${!badaddresses[@]}"; do
+      for address in ${badaddresses["$domain"]}; do
+        echo $address@$domain
+      done
+    done
   else
     echo -e "All addresses for domains on the account passed are found in the \
 shadow/passwd files for \$DOMAIN and in $HOME/mail/\$DOMAIN."  
@@ -48,15 +50,31 @@ if [[ "${#badaddresses[@]}" > 0 ]]; then
  the address exists in $HOME/mail/\$DOMAIN, has entries in\
  $HOME/etc/\$DOMAIN/{shadow,passwd}, and that permissions are correct.\n" \
   | fold -w 80 -s
-  for address in "${badaddresses[@]}"; do
-    echo "$address"
-  done
+  for domain in "${!badaddresses[@]}"; do
+      for address in ${badaddresses["$domain"]}; do
+        echo $address@$domain
+      done
+    done
   echo
   answer=$(confirm "Would you like to attempt to repair these addresses? \
 WARNING: This will reset the password for each repaired address.")
   while [[ $answer == "yes" ]]; do
+    for domain in "${!badaddresses[@]}"; do
+      cp -v $HOME/etc/$domain/{shadow,passwd}{,$(date +%s).bak}
+
+    done
+# TODO
     for address in "${badaddresses[@]}"; do
-    echo -e "\nDoing stuff to $address"
+    echo -e "\nDoing stuff to ${address%@*}"
+    if grep -q ${address%@*} $HOME/etc/${address#*@}/{shadow,passwd}; then
+    echo "placeholder"
+    fi
+    #uapi Email add_pop \
+    #email=${address%@*} \
+    #password='echo $(cat /dev/urandom | tr -dc '[:upper:][:lower:][:digit:][:punct:]' | fold -w 12 | head -1)' \
+    #quota=0 \
+    #domain=${address#*@} \
+    #skip_update_db=1
     done
   break
   done
