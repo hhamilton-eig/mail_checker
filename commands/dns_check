@@ -58,7 +58,7 @@ else
       if [[ ${#dmarc} > 0 ]]; then
         echo -e "\nDMARC:\n\n$dmarc"
       else
-        echo -e "$domain does not appear to have a DMARC configured!"
+        echo -e "\n$domain does not appear to have a DMARC configured!"
       fi
   echo
 done
