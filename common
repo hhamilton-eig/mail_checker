@@ -67,7 +67,7 @@ while true; do
       break 2
       ;;
     * )
-      echo "invalid" >&2
+      echo "Invalid input, please try again." >&2
       ;;
   esac
 done
