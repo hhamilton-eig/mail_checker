@@ -60,8 +60,8 @@ if [[ "${#badaddresses[@]}" > 0 ]]; then
 WARNING: This will reset the password for each repaired address.")
   while [[ $answer == "yes" ]]; do
     for domain in "${!badaddresses[@]}"; do
-      cp -v $HOME/etc/$domain/{shadow,passwd}{,$(date +%s).bak}
-
+      cp $HOME/etc/$domain/passwd{,.$(date +%s).bak}
+      cp $HOME/etc/$domain/shadow{,.$(date +%s).bak}
     done
 # TODO
     for address in "${badaddresses[@]}"; do
