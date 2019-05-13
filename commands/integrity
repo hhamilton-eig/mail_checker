@@ -65,7 +65,7 @@ echo
       cp $HOME/etc/$domain/shadow{,.$(date +%s).bak}
     done
 # TODO combine/replace grep with sed to handle matching and removal? Test time for sed vs grep?
-# Move shadow/passwd out of the way first?
+# Move shadow/passwd out of the way first? Sed seems faster from my time test
     for domain in "${!badaddresses[@]}"; do
       for address in ${badaddresses["$domain"]}; do
         if egrep -q "^$address:" $HOME/etc/$domain/{shadow,passwd}; then
