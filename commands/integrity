@@ -64,11 +64,12 @@ echo
       cp $HOME/etc/$domain/passwd{,.$(date +%s).bak}
       cp $HOME/etc/$domain/shadow{,.$(date +%s).bak}
     done
-# TODO
+# TODO combine/replace grep with sed to handle matching and removal? Test time for sed vs grep?
+# Move shadow/passwd out of the way first?
     for domain in "${!badaddresses[@]}"; do
       for address in ${badaddresses["$domain"]}; do
-        if grep -q $address $HOME/etc/$domain/{shadow,passwd}; then
-          echo "$address@$domain is in a file, do some fine-matching and removal of this line"
+        if egrep -q "^$address:" $HOME/etc/$domain/{shadow,passwd}; then
+          echo "$address@$domain is in $domain/{shadow,passwd}, do some removal of this line"
         fi
       done
     done
