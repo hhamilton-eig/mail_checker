@@ -2,21 +2,21 @@ mailchk
 
 cPanel Mail Checker CLI by Heston Hamilton
 
-Installation instructions:
+```Installation instructions:
 
-```git clone https://https://github.com/TheGingeraffe/mail_checker
+git clone https://https://github.com/TheGingeraffe/mail_checker
 
 cd ./mail_checker
 
-./mailchk```
+./mailchk
 
 Usage:
 
-```mailchk $command [domain(s)]```
+mailchk $command [domain(s)]
 
 Commands:
    
-```\* Help
+\* Help
 
 -(d)ns          NS/MX/SPF/DKIM/DMARC check
 
