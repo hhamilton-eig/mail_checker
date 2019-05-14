@@ -30,7 +30,7 @@ Commands:
 
 case "$1" in
   -breakdown|-b)
-    "$mailchk_workdir/commands/breakdown"
+    "$mailchk_workdir/commands/breakdown" "$@"
     ;;
   -dns|-d)
     "$mailchk_workdir/commands/dns_check" "$@"
