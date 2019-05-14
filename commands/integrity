@@ -113,7 +113,7 @@ else
         fi
     else
         echo -e "\nAll addresses for domains on the account passed are found in \
-        $HOME/etc/\$DOMAIN/{shadow,passwd} and in $HOME/mail/\$DOMAIN."
+$HOME/etc/\$DOMAIN/{shadow,passwd} and in $HOME/mail/\$DOMAIN."
     fi
 fi
 echo
