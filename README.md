@@ -1,5 +1,6 @@
 mailchk
-cPanel Mail Checker CLI by Heston Hamilton
+
+cPanel mail checker CLI by Heston Hamilton
 
 Installation instructions:
 ```
