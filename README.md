@@ -4,7 +4,7 @@ cPanel mail checker CLI by Heston Hamilton
 
 Installation instructions:
 ```
-git clone https://https://github.com/TheGingeraffe/mail_checker
+git clone https://github.com/TheGingeraffe/mail_checker
 
 cd ./mail_checker
 
