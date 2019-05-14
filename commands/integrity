@@ -26,9 +26,34 @@ $HOME/etc/\$DOMAIN/{shadow,passwd}, and that permissions are correct.\n" \
         echo $address@$domain
       done
     done
-  else
-    echo -e "All addresses for domains on the account passed are found in the \
-shadow/passwd files for \$DOMAIN and in $HOME/mail/\$DOMAIN."  
+    echo
+    answer=$(confirm "Would you like to attempt to repair these addresses? \
+WARNING: This will reset the password for each repaired address.")
+echo
+    if [[ $answer == "yes" ]]; then
+      for domain in "${!badaddresses[@]}"; do
+      cp $HOME/etc/$domain/passwd{,.$(date +%s).bak}
+      cp $HOME/etc/$domain/shadow{,.$(date +%s).bak}
+      for address in ${badaddresses["$domain"]}; do
+        if egrep -q "^$address:" $HOME/etc/$domain/{shadow,passwd}; then
+          echo -e "$address@$domain is in $(egrep -l "^$address:" $HOME/etc/$domain/{shadow,passwd}), removing entry\n"
+          sed -i "/^$address/d" $HOME/etc/$domain/shadow
+          sed -i "/^$address/d" $HOME/etc/$domain/passwd
+          uapi Email add_pop \
+          email=${address%@*} \
+          password='echo $(cat /dev/urandom | tr -dc '[:upper:][:lower:][:digit:][:punct:]' | fold -w 12 | head -1)' \
+          quota=0 \
+          domain="$domain" \
+          skip_update_db=1 &>/dev/null &&\
+          echo -e "$address@$domain successfully regenerated\n" ||\
+          echo -e "$address@$domain creation failed\n"
+        fi
+      done
+    done
+  fi 
+else
+    echo -e "\nAll addresses for domains on the account passed are found in \
+$HOME/etc/$domain/{shadow,passwd} and in $HOME/mail/$domain."  
   fi
 
 else
@@ -51,10 +76,10 @@ if [[ "${#badaddresses[@]}" > 0 ]]; then
  $HOME/etc/\$DOMAIN/{shadow,passwd}, and that permissions are correct.\n" \
   | fold -w 80 -s
   for domain in "${!badaddresses[@]}"; do
-      for address in ${badaddresses["$domain"]}; do
-        echo $address@$domain
-      done
+    for address in ${badaddresses["$domain"]}; do
+      echo $address@$domain
     done
+  done
   echo
   answer=$(confirm "Would you like to attempt to repair these addresses? \
 WARNING: This will reset the password for each repaired address.")
@@ -63,29 +88,28 @@ echo
     for domain in "${!badaddresses[@]}"; do
       cp $HOME/etc/$domain/passwd{,.$(date +%s).bak}
       cp $HOME/etc/$domain/shadow{,.$(date +%s).bak}
-    done
-# TODO combine/replace grep with sed to handle matching and removal? Test time for sed vs grep?
-# Move shadow/passwd out of the way first? Sed seems faster from my time test
-    for domain in "${!badaddresses[@]}"; do
       for address in ${badaddresses["$domain"]}; do
         if egrep -q "^$address:" $HOME/etc/$domain/{shadow,passwd}; then
-          echo "$address@$domain is in $domain/{shadow,passwd}, do some removal of this line"
+          echo -e "$address@$domain is in $(egrep -l "^$address:" $HOME/etc/$domain/{shadow,passwd}), removing entry\n"
+          sed -i "/^$address/d" $HOME/etc/$domain/shadow
+          sed -i "/^$address/d" $HOME/etc/$domain/passwd
+          uapi Email add_pop \
+          email=${address%@*} \
+          password='echo $(cat /dev/urandom | tr -dc '[:upper:][:lower:][:digit:][:punct:]' | fold -w 12 | head -1)' \
+          quota=0 \
+          domain="$domain" \
+          skip_update_db=1 &>/dev/null &&\
+          echo -e "$address@$domain successfully regenerated\n" ||\
+          echo -e "$address@$domain creation failed\n"
         fi
       done
     done
-    #uapi Email add_pop \
-    #email=${address%@*} \
-    #password='echo $(cat /dev/urandom | tr -dc '[:upper:][:lower:][:digit:][:punct:]' | fold -w 12 | head -1)' \
-    #quota=0 \
-    #domain=${address#*@} \
-    #skip_update_db=1
+  fi
 else
-  echo -e "All addresses for domains on the account passed are found in the \
-shadow/passwd files for \$DOMAIN and in $HOME/mail/\$DOMAIN."
+  echo -e "\nAll addresses for domains on the account passed are found in \
+$HOME/etc/\$DOMAIN/{shadow,passwd} and in $HOME/mail/\$DOMAIN."
 fi
   fi
-fi
 echo
 
-# TODO add uapi loop that recreates addresses if user says "yes" for each domain
 # TODO eventually refactor for readability, make some vars etc.
