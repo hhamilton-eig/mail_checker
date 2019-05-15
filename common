@@ -37,9 +37,7 @@ get_spf(){
 get_dkim(){
     dkim=$(dig "${2:-default}._domainkey.${1}" txt +nocmd +short \
     | awk -F';|=|"|\\\\' '{print $9$11}')
-    pretty_dkim="-----BEGIN PUBLIC KEY-----\n\
-    $dkim\n\
-    -----END PUBLIC KEY-----"
+    pretty_dkim="-----BEGIN PUBLIC KEY-----\n${dkim}\n-----END PUBLIC KEY-----"
 }
 
 get_dmarc(){

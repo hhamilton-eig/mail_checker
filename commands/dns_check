@@ -22,8 +22,9 @@ if [[ ! -z "$2" ]]; then
         get_dkim $domain
         if [[ ${#dkim} > 0 ]]; then
             echo -e "\nDKIM:\n"
-            echo -e "$pretty_dkim" | fold -w 64 | openssl rsa -noout -text -pubin | head -1
-            echo -e "\n$pretty_dkim" | fold -w 64
+            echo -e $pretty_dkim | fold -w 64 | openssl rsa -noout -text -pubin | head -1
+            echo
+            echo -e $pretty_dkim | fold -w 64
         else
             echo -e "\n$domain does not appear to have a DKIM configured!"
         fi
@@ -54,8 +55,9 @@ else
         get_dkim $domain
         if [[ ${#dkim} > 0 ]]; then
             echo -e "\nDKIM:\n"
-            echo -e "$pretty_dkim" | fold -w 64 | openssl rsa -noout -text -pubin | head -1
-            echo -e "\n$pretty_dkim" | fold -w 64
+            echo -e $pretty_dkim | fold -w 64 | openssl rsa -noout -text -pubin | head -1
+            echo
+            echo -e $pretty_dkim | fold -w 64
         else
             echo -e "\n$domain does not appear to have a DKIM configured!"
         fi
