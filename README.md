@@ -6,9 +6,7 @@ Installation instructions:
 ```
 git clone https://github.com/TheGingeraffe/mail_checker
 
-cd ./mail_checker
-
-./mailchk
+./mail_checker/mailchk
 ```
 Usage:
 ```
