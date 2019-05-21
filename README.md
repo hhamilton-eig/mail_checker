@@ -22,3 +22,4 @@ Commands:
 
 -(i)ntegrity    Shadow/passwd/maildir checks
 ```
+Each command option can accept a space-delimited list of domains. The command will run for all domains on the account if given no optional arguments.
